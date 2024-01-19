@@ -7,9 +7,10 @@
   - Using a two-dimensional array to store extended keys
 - tb_simon
   - for the simulation of simon.v and simon_en_decryption 
+- key_debounce.v
+  - 按键消抖
+- simon_top.v
+  - 包括key_debounce.v, simon_en_decryption.v
+  - 加/解密成功则按键可以控制led亮灭
 - Module division/Bram storage ......
-
-
-
-
 
