@@ -51,11 +51,11 @@ module simon_top(
     end 
 
     key_debounce key_debounce(
-       .clk        (clk   ), //50M的时钟输入  
+       .clk        (clk   ), 
        .rst_n      (rst_n ),
        .key_in     (key_in),
-       .key_down   (key_down),  //按键按下产生一个高电平吗脉冲
-       .key_up     (key_up  )   //按键松开产生一个高电平
+       .key_down   (key_down),  
+       .key_up     (key_up  )  
     );
 
     simon_en_de_cryption #(
