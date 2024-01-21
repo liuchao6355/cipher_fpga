@@ -40,6 +40,7 @@ module zuc(
     wire [31:0] W_reg;
     reg [31:0] Z_reg; 
 
+
     parameter IDLE=4'd0,INIT_BITRE=4'd1,INIT_F=4'd2,INIT_LFSR=4'd3,
               WORK_A_BITRE=4'd4,WORK_A_F=4'd5,WORK_A_LFSR=4'd6,
               WORK_B_BITRE=4'd7,WORK_B_F=4'd8,WORK_B_LFSR=4'd9,
@@ -145,9 +146,7 @@ module zuc(
                 INIT_F:begin
                     W <= W_reg;
                 end
-                INIT_LFSR: begin
-
-                end
+                INIT_LFSR: 
                 WORK_A_BITRE:
 
                 WORK_A_F:
