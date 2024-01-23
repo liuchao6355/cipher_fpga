@@ -32,6 +32,8 @@ module zuc(
     );
 
     reg [30:0] s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15;
+    wire[30:0] s16;
+    reg lfsr_mode;
     reg [31:0] X0,X1,X2,X3;
     wire [31:0] X0_reg,X1_reg,X2_reg, X3_reg;
     reg [31:0] R1,R2;
@@ -39,7 +41,7 @@ module zuc(
     reg [31:0] W;
     wire [31:0] W_reg;
     reg [31:0] Z_reg; 
-
+    reg done_reg;
 
     parameter IDLE=4'd0,INIT_BITRE=4'd1,INIT_F=4'd2,INIT_LFSR=4'd3,
               WORK_A_BITRE=4'd4,WORK_A_F=4'd5,WORK_A_LFSR=4'd6,
@@ -80,8 +82,12 @@ module zuc(
                     next_state <= INIT_BITRE;
                 INIT_BITRE:
                     next_state <=INIT_F;
-                INIT_F:
-                    next_state <= INIT_LFSR;
+                INIT_F:begin
+                    // if(add1clk)
+                    //     next_state <= INIT_F;
+                    // else
+                        next_state <= INIT_LFSR;
+                end
                 INIT_LFSR: begin
                     if(cnt==31)
                         next_state <= WORK_A_BITRE;
@@ -108,7 +114,7 @@ module zuc(
             endcase
         end
     end
-
+    reg add1clk;
     // FSM-3
     always @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
@@ -142,29 +148,57 @@ module zuc(
                     X1 <= X1_reg;
                     X2 <= X2_reg;
                     X3 <= X3_reg;
+                    // add1clk <= 1;
                 end
                 INIT_F:begin
+                    // if(add1clk) add1clk <= 0;
                     W <= W_reg;
+                    R1 <= R1_reg;
+                    R2 <= R2_reg;
+                    lfsr_mode <= 1'b1;// initial mode
                 end
-                INIT_LFSR: 
-                WORK_A_BITRE:
-
-                WORK_A_F:
-
-                WORK_A_LFSR:
-
-                WORK_B_BITRE:
-
-                WORK_B_F:
-
+                INIT_LFSR: begin
+                    {s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15} <= {s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16};
+                end
+                WORK_A_BITRE: begin
+                    X0 <= X0_reg;
+                    X1 <= X1_reg;
+                    X2 <= X2_reg;
+                    X3 <= X3_reg;
+                end
+                WORK_A_F: begin
+                    R1 <= R1_reg;
+                    R2 <= R2_reg;
+                    lfsr_mode <= 1'b0;// work mode
+                end
+                WORK_A_LFSR:begin
+                    {s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15} <= {s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16};      
+                end
+                WORK_B_BITRE: begin
+                    X0 <= X0_reg;
+                    X1 <= X1_reg;
+                    X2 <= X2_reg;
+                    X3 <= X3_reg;
+                    done_reg <= 0;
+                end
+                WORK_B_F:begin
+                    Z_reg <= W_reg^X3;
+                    done_reg <= 1;
+                    R1 <= R1_reg;
+                    R2 <= R2_reg;
+                    lfsr_mode <= 1'b0;// work mode
+                end
                 WORK_B_LFSR: begin
-
+                    done_reg <= 0;
+                    {s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15} <= {s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16};
                 end
                 FINISH:;
             endcase
         end
     end
-
+    assign Z = done?Z_reg:0;
+    assign done = done_reg;
+    assign L_out = cnt;
     BitReconstruction BitReconstruction(
         .s15(s15),.s14(s14),.s11(s11),.s9(s9),.s7(s7),.s5(s5),.s2(s2),.s0(s0),
         .X0(X0_reg),.X1(X1_reg),.X2(X2_reg),.X3(X3_reg)
@@ -175,4 +209,8 @@ module zuc(
         .W(W_reg),.R1out(R1_reg),.R2out(R2_reg)
     );
 
+    LFSR LFSR(
+        .lfsr_mode(lfsr_mode),.s15(s15),.s13(s13),.s10(s10),.s4(s4),.s0(s0),.u(W[31:1]),
+        .s16(s16)
+    );
 endmodule
