@@ -1,0 +1,15 @@
+- tb_sm3.v
+  - Set bit length len and message m
+  - then can get 256 bit m_out
+- tb_CF.v
+  - Verify the functionality of each iteration round(CF.v)
+- sm3.v
+  - rst_n=0, then rst_n=1
+  - completed when done=1
+  - for i to n-1  $V^{i+1}=CF(V^{i},B^{i})$   
+- CF.v
+  - $V^{i+1}=CF(V^{i},B^{i})$   
+  - include compress.v and 
+- compress.v
+  - combinational logic
+  - Each round of compression
