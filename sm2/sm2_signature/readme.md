@@ -6,8 +6,8 @@
   - **inv_mod.v**  模逆，耗时较长
   - **sm3**  包含sm3.v、CF.v、compress.v、shift.v
   - **P_mul.v** 点乘操作，采用蒙哥马利点乘+标准射影坐标实现，每轮循环不需要计算模逆，初始化1次PD运算，每轮循环并行计算1次PD，1次PA。参考论文：Weierstraß Elliptic Curves and Side-Channel Attacks
-    - **PA.v** 点加操作，10个时钟周期，涉及mul_mod模块
-    - **PD.v** 倍点操作，10个时钟周期，涉及mul_mod模块
+    - **PA.v** 点加操作，10次模乘，涉及mul_mod模块
+    - **PD.v** 倍点操作，10次模乘，涉及mul_mod模块
     - **convert_coordinate.v**  标准射影坐标转为放射坐标，3次模逆运算，若干模乘运算
   - **P_mul.py**  点乘python文件测试，获取中间结果debug使用
 
