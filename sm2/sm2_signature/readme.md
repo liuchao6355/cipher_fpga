@@ -1,0 +1,13 @@
+- **sm2_signature.v**:sm2签名顶层模块，需预定义消息长度
+  - **barrett.v**  模乘abmodn n必须sm2椭圆曲线的阶，
+  - **mul_mod.v** 模乘abmodp p必须sm2椭圆曲线大素数，KO分治+快速约减（1个时钟周期），使用64*64 乘法器ip，消耗16个dsp，KO分治时可采用更多dsp极大加快点乘速度。为节省资源使用流水线操作
+  - **add_mod.v**  1个时钟周期
+  - **sub_mod.v** 1个时钟周期
+  - **inv_mod.v**  模逆，耗时较长
+  - **sm3**  包含sm3.v、CF.v、compress.v、shift.v
+  - **P_mul.v** 点乘操作，采用蒙哥马利点乘+标准射影坐标实现，每轮循环不需要计算模逆，初始化1次PD运算，每轮循环并行计算1次PD，1次PA。参考论文：Weierstraß Elliptic Curves and Side-Channel Attacks
+    - **PA.v** 点加操作，10个时钟周期，涉及mul_mod模块
+    - **PD.v** 倍点操作，10个时钟周期，涉及mul_mod模块
+    - **convert_coordinate.v**  标准射影坐标转为放射坐标，3次模逆运算，若干模乘运算
+  - **P_mul.py**  点乘python文件测试，获取中间结果debug使用
+
