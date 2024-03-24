@@ -24,7 +24,7 @@ module simon_en_de_cryption #(
     parameter N = 16,
     parameter M = 4,
     parameter T = 32,
-    parameter j = 0
+    parameter j = 0 //常数列
 )(
     input clk,
     input rst_n,
